@@ -2,15 +2,15 @@
 title: "Práctica 5. Datos Anómalos"
 subtitle: "Análisis Exploratorio de Datos, Máster en Ciencia de Datos - UV"
 output:
+  pdf_document:
+    toc: yes
+    toc_depth: 3
+    number_sections: no
   html_document:
     echo: yes
     number_sections: no
     theme: lumen
     toc: yes
-  pdf_document:
-    toc: yes
-    toc_depth: 3
-    number_sections: no
 ---
 
 ```{r setup, cache = F, echo = F, message = F, warning = F, tidy = F}
@@ -79,7 +79,7 @@ Inspecciona visualmente los valores del conjunto de datos (`View`) y ordena de m
 
 ```{r Solucion ejercicio 1, include=TRUE, echo=TRUE, eval=TRUE, results=TRUE}
 # Medidas con valores faltantes, longitudes negativas y cero
-View(dirty_iris)
+#View(dirty_iris)
 vars <- names(dirty_iris)
 
 
@@ -270,7 +270,15 @@ Representa gráficamente los datos de `Petal.Length` (distribución de puntos en
 Nota: usa en `geom_point` con la opción `position='jitter'` para mejorar la legibilidad del gráfico.
 
 ```{r Solucion ejercicio 8, include=TRUE, echo=TRUE, eval=TRUE, results=TRUE}
+library(ggplot2)
 
+outliers %>%  pivot_longer(
+    cols = starts_with("Petal.Length_"), 
+    names_to = "Metodo", 
+    values_to = "outlier"
+  ) %>% 
+  ggplot(aes(x = Metodo, y = Petal.Length, color = Es_outlier)) +
+  geom_point(position = position_jitter(width = 0.2, height = 0), alpha = 0.7, size = 2) 
 ```
 
 # Imputación de datos
