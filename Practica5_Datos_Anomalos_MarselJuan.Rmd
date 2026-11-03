@@ -116,6 +116,7 @@ Nota: Puedes reemplazar los valores para cada variable del dataframe usando `mut
 var_num <- sapply(dirty_iris,is.numeric)
 iris_NA <- dirty_iris[var_num] %>% 
   mutate(across(everything(), function(x) ifelse(!is.finite(x) | x <= 0, NA, x)))
+iris_NA$Species <-dirty_iris$Species
 
 ```
 
@@ -126,7 +127,13 @@ iris_NA <- dirty_iris[var_num] %>%
   * Emplea después la función `na.omit` para quedarnos solo con las filas con datos completos en un nuevo data frame `clean_iris`.
 
 ```{r Solucion ejercicio 3, include=TRUE, echo=TRUE, eval=TRUE, results=TRUE}
+numero_NA <-sum(complete.cases(iris_NA))
+frac_NA <- numero_NA/length(complete.cases(iris_NA))
+cat('Hay', numero_NA, 'NA\'s. Es decir,', frac_NA*100,'% de NA\'s')
 
+clean_iris <-na.omit(iris_NA)
+
+cat('Pasamos de ', dim(dirty_iris)[1], 'filas y ', dim(dirty_iris)[2], 'columnas; a tener sin NA\'s', dim(clean_iris)[1], 'filas y ', dim(clean_iris)[2], 'columnas')
 ```
 
 # Detección de outliers univariante
