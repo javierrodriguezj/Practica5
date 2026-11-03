@@ -85,9 +85,6 @@ vars <- names(dirty_iris)
 
 iris_Mm <- sapply(dirty_iris, function(x) sort(x, decreasing = TRUE)) #iris ordenado de Mayor a menor
 iris_mM <- sapply(dirty_iris, function(x) sort(x, decreasing = FALSE))  #iris ordenado de menor a Mayor
-
-head(iris_Mm)
-head(iris_mM)
 ```
 
 Notamos que el número de observaciones por variable ahora ha cambiado, es decir, había `NA` en nuestros datos.
@@ -154,8 +151,48 @@ Hazlo para el data frame con observaciones completas `clean_iris` (que no tiene 
   * Compara los resultados para los dos conjuntos en la variable `Petal.Length`.
 
 ```{r , include = TRUE}
+madm <- function(x) {
+  med_x <- median(x, na.rm = TRUE)
+  1.4826 * median(abs(x - med_x), na.rm = TRUE)
+}
+resumen<-clean_iris[var_num]%>%summarise(across( .cols = everything(),
+                                        .fns = list(
+                                          media = ~ mean(.x, na.rm = TRUE), # Calcula la media
+                                             sd = ~ sd(.x, na.rm = TRUE),
+                                          mediana = ~ median(.x, na.rm = TRUE),
+                                          IQR = ~ IQR(.x, na.rm = TRUE),
+                                          MADM = ~madm(.x)
+                                        ),
+                                        .names = "{.col}_{.fn}"
+                                        ))
+
+resumen_clean <- pivot_longer(resumen, cols = everything(), names_to = c('variable', 'estadistico'), names_sep = '_')
+resumen_clean %<>% pivot_wider( names_from = estadistico, values_from = value)
+resumen_clean
 
 ```
+
+Ahora con los datos sin limpiar
+
+```{r}
+resumen<-dirty_iris[var_num]%>%summarise(across( .cols = everything(),
+                                        .fns = list(
+                                          media = ~ mean(.x, na.rm = TRUE), # Calcula la media
+                                             sd = ~ sd(.x, na.rm = TRUE),
+                                          mediana = ~ median(.x, na.rm = TRUE),
+                                          IQR = ~ IQR(.x, na.rm = TRUE),
+                                          MADM = ~madm(.x)
+                                        ),
+                                        .names = "{.col}_{.fn}"
+                                        ))
+
+resumen_dirty <- pivot_longer(resumen, cols = everything(), names_to = c('variable', 'estadistico'), names_sep = '_')
+resumen_dirty %<>% pivot_wider( names_from = estadistico, values_from = value)
+resumen_dirty
+```
+La principal diferencia la vemos en `Petal.Width` donde usando los datos completamente en bruto tenemos un valor `Inf` y `NaN` en la media y la desviación típica, respectivamente. Este efecto es porque justamente en esa variable tenemos un valor `Inf` por lo tanto, contamina dichos estadísticos.
+
+Los valores obtenidos en la media son parecidos, coincidiendo resultados entre 1 y 2 cifras significativas. La sd es la que más sufre al quitar los `NA` ya que es muy sensible al número de muestras. Por otro lado, la mediana y el IQR se mantienen muy estables al eliminar los valores faltantes. Por último, el MADM como depende de la media vemos grandes cambios entre los dos conjuntos.
 
 
 ## Ejercicio 5: Métodos de detección de outliers
