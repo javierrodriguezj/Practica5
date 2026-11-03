@@ -36,6 +36,8 @@ knitr::opts_chunk$set(fig.width=8, fig.height=4)
 
 ```{r}
 library(pacman)
+library(dplyr)
+library(magrittr)
 packages = c("knitr", "ggplot2","tidyr","dplyr","readr")
 pacman::p_load(char=packages)
 
@@ -111,6 +113,9 @@ Nota: Puedes reemplazar los valores para cada variable del dataframe usando `mut
 ```{r Solucion ejercicio 2, include=TRUE, echo=TRUE, eval=TRUE, results=TRUE}
 # DEBEMOS ELIMINAR TAMBIEN LOS VALROES IGUALES A CERO YA QUE SE TRATA DE LONGITUDES DE PARTES DE UNA FLOR. NO PUEDEN SER O
 
+var_num <- sapply(dirty_iris,is.numeric)
+iris_NA <- dirty_iris[var_num] %>% 
+  mutate(across(everything(), function(x) ifelse(!is.finite(x) | x <= 0, NA, x)))
 
 ```
 
