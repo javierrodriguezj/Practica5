@@ -77,8 +77,20 @@ Inspecciona visualmente los valores del conjunto de datos (`View`) y ordena de m
 
 ```{r Solucion ejercicio 1, include=TRUE, echo=TRUE, eval=TRUE, results=TRUE}
 # Medidas con valores faltantes, longitudes negativas y cero
+View(dirty_iris)
+vars <- names(dirty_iris)
 
+
+iris_Mm <- sapply(dirty_iris, function(x) sort(x, decreasing = TRUE)) #iris ordenado de Mayor a menor
+iris_mM <- sapply(dirty_iris, function(x) sort(x, decreasing = FALSE))  #iris ordenado de menor a Mayor
+
+head(iris_Mm)
+head(iris_mM)
 ```
+
+Notamos que el número de observaciones por variable ahora ha cambiado, es decir, había `NA` en nuestros datos.
+- Cuando los hemos ordenador de mayor a menor vemos valores muy dispares entre observaciones consecutivas. Por ejemplo, en `Sepal.Length` vemos medidas de 73 hasta 7.9 y en `Petal.Width` vemos un valor `Inf`
+- Cuando los hemos ordenador de menor a mayor vemos un valor negativo `Sepal.Width` y también valores de 0 en `Petal.Length`
 
 ## Ejercicio 2: Valores especiales
 
