@@ -212,12 +212,12 @@ Escribe una función que detecte los outliers de un vector $x$ para cada uno de 
 reglasigma <- function(x){
   x_m <- mean(x, na.rm = TRUE)
   x_sd <- sd(x, na.rm = TRUE)
-  x[abs(x-xm) > 3*x_sd] 
+  abs(x-x_m) > 3*x_sd
 }
 
 # Identificador Hampel
 reglahampel<- function(x){
-  x[x > madm(x)*3]
+  x > madm(x)*3
 }
 
 
@@ -227,12 +227,11 @@ reglaboxplot <- function(x){
   x_q1 <- quantile(x, 0.25, na.rm=TRUE)
   x_q3 <- quantile(x, 0.75, na.rm =TRUE)
   iqr <- IQR(x, na.rm = TRUE)
-  x[(x < x_q1-1.5*iqr) | (x > x_q3+1.5*iqr)]
+  (x < x_q1-1.5*iqr) | (x > x_q3+1.5*iqr)
 }
 # Percentiles
 reglapercentil <- function(x){
-
-  x[(x < quantile(x,0.05, na.rm = TRUE)) | (x > quantile(x, 0.95, na.rm =TRUE))]
+  (x < quantile(x,0.05, na.rm = TRUE)) | (x > quantile(x, 0.95, na.rm =TRUE))
 }
 
 ```
@@ -244,9 +243,7 @@ Utiliza la función `mutate` y `across` para identificar los outliers en la vari
 Nota: podría extenderse la aplicación a todas las variables numéricas usando también `mutate`, `across` y `where`. 
 
 ```{r Solucion ejercicio 6, include=TRUE, echo=TRUE, eval=TRUE, results=TRUE}
-
-
-
+clean_iris %>% mutate(across(Petal.Length, list(reglasigma, reglahampel, reglaboxplot, reglapercentil)))
 ```
 
 ## Ejercicio 7: Comparativa de los métodos de detección de outliers
