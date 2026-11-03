@@ -277,7 +277,7 @@ outliers %>%  pivot_longer(
     names_to = "Metodo", 
     values_to = "outlier"
   ) %>% 
-  ggplot(aes(x = Metodo, y = Petal.Length, color = Es_outlier)) +
+  ggplot(aes(x = Metodo, y = Petal.Length, color = outlier)) +
   geom_point(position = position_jitter(width = 0.2, height = 0), alpha = 0.7, size = 2) 
 ```
 
